@@ -1,13 +1,17 @@
 import sys
 import os
-# Add the root directory to the Python path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from utils.feature_extraction import extract_features
+
+# Add the project root directory to the Python path
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(project_root)
+
 import numpy as np
+from utils.feature_extraction import extract_features
 import pickle
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
+
 
 def classification_model(healthy_dir, parkinson_dir, output_model_path):
     """
@@ -66,9 +70,9 @@ def classification_model(healthy_dir, parkinson_dir, output_model_path):
     print("Model training and saving completed successfully!")
 
 # Set paths for healthy and Parkinson's datasets
-healthy_dir = '/home/tanisha/Documents/SPR/HC_AH'
-parkinson_dir = '/home/tanisha/Documents/SPR/PD_AH'
-output_model_path = '/home/tanisha/Documents/SPR/models/classification_model.pkl'
+healthy_dir = 'HC_AH'
+parkinson_dir = 'PD_AH'
+output_model_path = './models/classification_model.pkl'
 
 # Train and save the classification model
 classification_model(healthy_dir, parkinson_dir, output_model_path)
