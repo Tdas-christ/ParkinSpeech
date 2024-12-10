@@ -56,3 +56,44 @@ def plot_formants(file_path, file_name):
     plt.savefig(formant_path)
     plt.close()
     return formant_path
+
+def plot_zero_crossing_rate(y, sr, file_name):
+    """Plot and save the Zero-Crossing Rate over time."""
+    frame_length = 2048
+    hop_length = 512
+    zcr = librosa.feature.zero_crossing_rate(y, frame_length=frame_length, hop_length=hop_length)[0]
+    times = librosa.times_like(zcr, sr=sr, hop_length=hop_length)
+
+    plt.figure(figsize=(10, 4))
+    plt.plot(times, zcr, label="Zero-Crossing Rate")
+    plt.title("Zero-Crossing Rate Over Time")
+    plt.xlabel("Time (s)")
+    plt.ylabel("Rate")
+    plt.legend()
+    plt.tight_layout()
+    zcr_path = f"./static/{file_name}_zcr.png"
+    plt.savefig(zcr_path)
+    plt.close()
+    return zcr_path
+
+def plot_pitch_contour(y, sr, file_name):
+    """Plot and save pitch contour."""
+    pitches, magnitudes = librosa.piptrack(y=y, sr=sr)
+    times = librosa.times_like(pitches, sr=sr)
+
+    pitch_values = np.max(pitches, axis=0)
+    pitch_values[pitch_values == 0] = np.nan  # Mask zeros
+
+    plt.figure(figsize=(10, 4))
+    plt.plot(times, pitch_values, label="Pitch Contour (F0)", color="g")
+    plt.title("Pitch Contour Over Time")
+    plt.xlabel("Time (s)")
+    plt.ylabel("Frequency (Hz)")
+    plt.legend()
+    plt.tight_layout()
+    pitch_path = f"./static/{file_name}_pitch.png"
+    plt.savefig(pitch_path)
+    plt.close()
+    return pitch_path
+
+

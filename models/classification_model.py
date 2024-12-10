@@ -8,7 +8,7 @@ sys.path.append(project_root)
 import numpy as np
 from utils.feature_extraction import extract_features
 import pickle
-from sklearn.ensemble import RandomForestClassifier
+from xgboost import XGBClassifier  # For XGBoost
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
@@ -51,9 +51,9 @@ def classification_model(healthy_dir, parkinson_dir, output_model_path):
     print("Splitting dataset into training and testing sets...")
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    # Train the Random Forest classifier
-    print("Training the classification model...")
-    model = RandomForestClassifier(n_estimators=100, random_state=42)
+    # Train the XGBoost model
+    print("Training XGBoost Classifier...")
+    model = XGBClassifier(use_label_encoder=False, eval_metric="logloss", random_state=42)
     model.fit(X_train, y_train)
 
     # Evaluate the model

@@ -5,7 +5,7 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import librosa
 from utils.feature_extraction import extract_features
-from utils.visualizations import plot_waveform, plot_spectrogram, plot_formants
+from utils.visualizations import plot_waveform, plot_spectrogram, plot_formants, plot_zero_crossing_rate, plot_pitch_contour
 import pickle
 
 # Load the trained model
@@ -44,12 +44,15 @@ def classify_audio(file_path):
         waveform_path = plot_waveform(y, sr, file_name)
         spectrogram_path = plot_spectrogram(y, sr, file_name)
         formant_path = plot_formants(file_path, file_name)
+        zcr_path = plot_zero_crossing_rate(y, sr, file_name)
+        pitch_path = plot_pitch_contour(y, sr, file_name)
 
         # Return all outputs
-        return (prediction, f"{confidence:.2f}%", waveform_path, spectrogram_path, formant_path, features.tolist())
+        return (prediction, f"{confidence:.2f}%", waveform_path, spectrogram_path, formant_path, zcr_path, pitch_path, features.tolist())
+
 
     except Exception as e:
-        return (str(e), "Error", None, None, None, None)
+            return (str(e), "Error", None, None, None, None, None, None)
 
 # Gradio Interface
 with gr.Blocks() as interface:
@@ -64,14 +67,18 @@ with gr.Blocks() as interface:
     with gr.Row():
         waveform_plot = gr.Image(label="Waveform")
         spectrogram_plot = gr.Image(label="Spectrogram")
-        formant_plot = gr.Image(label="Formant Frequencies")
     with gr.Row():
+        formant_plot = gr.Image(label="Formant Frequencies")
         features_output = gr.JSON(label="Extracted Features")
+    with gr.Row():
+        zcr_plot = gr.Image(label="Zero-Crossing Rate")
+        pitch_plot = gr.Image(label="Pitch Contour")
+
 
     analyze_button.click(
         classify_audio,
         inputs=[audio_input],
-        outputs=[prediction_output, confidence_output, waveform_plot, spectrogram_plot, formant_plot, features_output],
+        outputs=[prediction_output, confidence_output, waveform_plot, spectrogram_plot, formant_plot, zcr_plot, pitch_plot, features_output],
     )
 
 # Launch the Gradio app
