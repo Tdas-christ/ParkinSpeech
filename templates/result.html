@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Result</title>
+</head>
+<body>
+    <h1>Analysis Result</h1>
+    <h2>Prediction: {{ class_label }}</h2>
+    <h3>Extracted Features:</h3>
+    <pre>{{ features | tojson(indent=2) }}</pre>
+    <h3>Speech Signal Waveform:</h3>
+    <img src="{{ plot_path }}" alt="Speech Signal">
+    <a href="/">Analyze Another File</a>
+</body>
+</html>
