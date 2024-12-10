@@ -1,9 +1,11 @@
 import gradio as gr
 import os
 import numpy as np
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import librosa
 from utils.feature_extraction import extract_features
-from utils.visualizations import plot_waveform, plot_spectrogram
+from utils.visualizations import plot_waveform, plot_spectrogram, plot_formants
 import pickle
 
 # Load the trained model
@@ -22,6 +24,7 @@ def classify_audio(file_path):
         confidence (str): Confidence percentage.
         waveform_path (str): Path to the waveform image.
         spectrogram_path (str): Path to the spectrogram image.
+        formant_path (str): Path to the formant frequencies plot.
         features (list): Extracted features.
     """
     try:
@@ -40,12 +43,13 @@ def classify_audio(file_path):
         # Generate visualizations
         waveform_path = plot_waveform(y, sr, file_name)
         spectrogram_path = plot_spectrogram(y, sr, file_name)
+        formant_path = plot_formants(file_path, file_name)
 
         # Return all outputs
-        return prediction, f"{confidence:.2f}%", waveform_path, spectrogram_path, features.tolist()
+        return (prediction, f"{confidence:.2f}%", waveform_path, spectrogram_path, formant_path, features.tolist())
 
     except Exception as e:
-        return str(e), "Error", None, None, None
+        return (str(e), "Error", None, None, None, None)
 
 # Gradio Interface
 with gr.Blocks() as interface:
@@ -60,14 +64,18 @@ with gr.Blocks() as interface:
     with gr.Row():
         waveform_plot = gr.Image(label="Waveform")
         spectrogram_plot = gr.Image(label="Spectrogram")
+        formant_plot = gr.Image(label="Formant Frequencies")
     with gr.Row():
         features_output = gr.JSON(label="Extracted Features")
 
     analyze_button.click(
         classify_audio,
         inputs=[audio_input],
-        outputs=[prediction_output, confidence_output, waveform_plot, spectrogram_plot, features_output],
+        outputs=[prediction_output, confidence_output, waveform_plot, spectrogram_plot, formant_plot, features_output],
     )
 
 # Launch the Gradio app
 interface.launch()
+
+
+
